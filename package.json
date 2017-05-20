@@ -1,6 +1,6 @@
 {
   "name": "write",
-  "description": "Abstract class providing base-level utilities and helper methods for all classes to extend from",
+  "description": "A performant DOM writing library",
   "version": "0.1.0",
   "license": "Unlicense",
   "homepage": "https://github.com/ryanmorr/write",
