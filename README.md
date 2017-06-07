@@ -6,7 +6,7 @@
 [![License][license-image]][license-url]
 [![File Size][file-size-image]][project-url]
 
-> A performant DOM writing library
+> Batch DOM manipulations in a performant manner
 
 ## Usage
 
