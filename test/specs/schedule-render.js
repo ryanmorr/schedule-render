@@ -19,24 +19,19 @@ describe('schedule-render', () => {
         const fn1 = sinon.spy();
         const fn2 = sinon.spy();
         const requestSpy = sinon.spy(window, 'requestAnimationFrame');
-        const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
         scheduleRender(fn1);
         expect(requestSpy.callCount).to.equal(1);
-        expect(cancelSpy.callCount).to.equal(0);
 
         scheduleRender(fn2);
-        expect(requestSpy.callCount).to.equal(2);
-        expect(cancelSpy.callCount).to.equal(1);
+        expect(requestSpy.callCount).to.equal(1);
 
         requestSpy.restore();
-        cancelSpy.restore();
 
         requestAnimationFrame(() => {
             expect(fn1.called).to.equal(true);
             expect(fn2.called).to.equal(true);
-            expect(requestSpy.callCount).to.equal(2);
-            expect(cancelSpy.callCount).to.equal(1);
+            expect(requestSpy.callCount).to.equal(1);
             done();
         });
     });
