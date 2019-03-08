@@ -32,7 +32,7 @@ export function clear() {
     batch.length = 0;
 }
 
-export function write(fn) {
+export function scheduleRender(fn) {
     if (frame) {
         cancelAnimationFrame(frame);
     }

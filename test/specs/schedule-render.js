@@ -1,12 +1,12 @@
-import { write, fps, clear } from '../../src/write';
+import { scheduleRender, fps, clear } from '../../src/schedule-render';
 import { sleep } from '../setup';
 
-describe('write', () => {
-    it('should schedule a frame to write to the DOM', (done) => {
+describe('schedule-render', () => {
+    it('should schedule a frame to render DOM updates', (done) => {
         const fn = sinon.spy();
         const spy = sinon.spy(window, 'requestAnimationFrame');
 
-        write(fn);
+        scheduleRender(fn);
         requestAnimationFrame(() => {
             expect(fn.called).to.equal(true);
             expect(spy.called).to.equal(true);
@@ -21,11 +21,11 @@ describe('write', () => {
         const requestSpy = sinon.spy(window, 'requestAnimationFrame');
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
-        write(fn1);
+        scheduleRender(fn1);
         expect(requestSpy.callCount).to.equal(1);
         expect(cancelSpy.callCount).to.equal(0);
 
-        write(fn2);
+        scheduleRender(fn2);
         expect(requestSpy.callCount).to.equal(2);
         expect(cancelSpy.callCount).to.equal(1);
 
@@ -51,9 +51,9 @@ describe('write', () => {
         const fn2 = sinon.spy(() => sleep(2));
         const fn3 = sinon.spy(() => sleep(2));
 
-        write(fn1);
-        write(fn2);
-        write(fn3);
+        scheduleRender(fn1);
+        scheduleRender(fn2);
+        scheduleRender(fn3);
 
         requestAnimationFrame(() => {
             expect(fn1.called).to.equal(true);
@@ -69,8 +69,8 @@ describe('write', () => {
         const fn1 = sinon.spy(() => sleep(20));
         const fn2 = sinon.spy(() => sleep(2));
 
-        write(fn1);
-        write(fn2);
+        scheduleRender(fn1);
+        scheduleRender(fn2);
 
         requestAnimationFrame(() => {
             expect(fn1.called).to.equal(true);
@@ -86,8 +86,8 @@ describe('write', () => {
         const fn1 = sinon.spy();
         const fn2 = sinon.spy();
 
-        const remove1 = write(fn1);
-        write(fn2);
+        const remove1 = scheduleRender(fn1);
+        scheduleRender(fn2);
 
         remove1();
 
@@ -103,7 +103,7 @@ describe('write', () => {
         const requestSpy = sinon.spy(window, 'requestAnimationFrame');
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
-        const remove = write(fn);
+        const remove = scheduleRender(fn);
         expect(requestSpy.callCount).to.equal(1);
 
         remove();
@@ -117,8 +117,8 @@ describe('write', () => {
         const fn1 = sinon.spy();
         const fn2 = sinon.spy();
 
-        write(fn1);
-        write(fn2);
+        scheduleRender(fn1);
+        scheduleRender(fn2);
 
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 

@@ -15,10 +15,10 @@ import { Server } from 'karma';
 const banner = `/*! ${pkg.name} v${pkg.version} | ${pkg.homepage} */\n`;
 
 const config = {
-    name: 'write',
+    name: 'scheduleRender',
     files: './src/**/*.js',
-    entryFile: './src/write.js',
-    outputFile: 'write.js',
+    entryFile: './src/schedule-render.js',
+    outputFile: 'schedule-render.js',
     outputDir: './dist/',
     specs: './test/specs/**/*.js'
 };
