@@ -1,4 +1,4 @@
-export const now = typeof performance !== 'undefined' ? performance.now.bind(performance) : Date.now;
+const now = typeof performance !== 'undefined' ? performance.now.bind(performance) : Date.now;
 
 export function sleep(ms) {
     const start = now();

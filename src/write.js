@@ -1,18 +1,9 @@
-/**
- * Common variables
- */
 let frame;
 let fpsValue = 60;
 let interval = 1000 / fpsValue;
 const batch = [];
 const now = typeof performance !== 'undefined' ? performance.now.bind(performance) : Date.now;
 
-/**
- * Schedule a frame to batch DOM
- * updates at the specified fps
- *
- * @api private
- */
 function scheduleFrame() {
     frame = requestAnimationFrame(() => {
         frame = null;
@@ -29,39 +20,19 @@ function scheduleFrame() {
     });
 }
 
-/**
- * Set the frames-per-second
- *
- * @param {Number} value
- * @api public
- */
-function fps(value) {
+export function fps(value) {
     fpsValue = value;
     interval = 1000 / fpsValue;
 }
 
-/**
- * Cancel the frame if one has been
- * scheduled and empty the batch
- *
- * @api public
- */
-function clear() {
+export function clear() {
     if (frame) {
         cancelAnimationFrame(frame);
     }
     batch.length = 0;
 }
 
-/**
- * Use `requestAnimationFrame` to
- * batch DOM updates to boost
- * performance
- *
- * @param {Function} fn
- * @api public
- */
-export default function write(fn) {
+export function write(fn) {
     if (frame) {
         cancelAnimationFrame(frame);
     }
@@ -78,10 +49,3 @@ export default function write(fn) {
         }
     };
 }
-
-/**
- * Add helper functions to the
- * `write` default export
- */
-write.fps = fps;
-write.clear = clear;

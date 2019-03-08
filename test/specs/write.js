@@ -1,5 +1,5 @@
-import write from '../../src/write';
-import { now, sleep } from '../setup';
+import { write, fps, clear } from '../../src/write';
+import { sleep } from '../setup';
 
 describe('write', () => {
     it('should schedule a frame to write to the DOM', (done) => {
@@ -42,8 +42,8 @@ describe('write', () => {
     });
 
     it('should be able to set the frames-per-second', () => {
-        expect(write.fps).to.be.a('function');
-        expect(write.fps.length).to.equal(1);
+        expect(fps).to.be.a('function');
+        expect(fps.length).to.equal(1);
     });
 
     it('should execute all callback functions within a single frame if they don\'t exceed the fps interval time', (done) => {
@@ -64,7 +64,7 @@ describe('write', () => {
     });
 
     it('should automatically schedule another frame if the fps interval time has been exceeded', (done) => {
-        write.fps(60);
+        fps(60);
 
         const fn1 = sinon.spy(() => sleep(20));
         const fn2 = sinon.spy(() => sleep(2));
@@ -122,7 +122,7 @@ describe('write', () => {
 
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
-        write.clear();
+        clear();
 
         expect(cancelSpy.callCount).to.equal(1);
 
