@@ -23,7 +23,7 @@ export function scheduleRender(callback) {
         frame = requestAnimationFrame(render);
     }
     batch.push(callback);
-    return function remove() {
+    return () => {
         const index = batch.indexOf(callback);
         if (index === -1) {
             return;

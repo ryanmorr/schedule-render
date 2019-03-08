@@ -3,12 +3,12 @@ import { sleep } from '../setup';
 
 describe('schedule-render', () => {
     it('should schedule a frame to render DOM updates', (done) => {
-        const fn = sinon.spy();
+        const callback = sinon.spy();
         const spy = sinon.spy(window, 'requestAnimationFrame');
 
-        scheduleRender(fn);
+        scheduleRender(callback);
         requestAnimationFrame(() => {
-            expect(fn.called).to.equal(true);
+            expect(callback.called).to.equal(true);
             expect(spy.called).to.equal(true);
             spy.restore();
             done();
@@ -16,44 +16,40 @@ describe('schedule-render', () => {
     });
 
     it('should only schedule one frame per cycle', (done) => {
-        const fn1 = sinon.spy();
-        const fn2 = sinon.spy();
+        const callback1 = sinon.spy();
+        const callback2 = sinon.spy();
         const requestSpy = sinon.spy(window, 'requestAnimationFrame');
 
-        scheduleRender(fn1);
+        scheduleRender(callback1);
         expect(requestSpy.callCount).to.equal(1);
 
-        scheduleRender(fn2);
+        scheduleRender(callback2);
         expect(requestSpy.callCount).to.equal(1);
 
         requestSpy.restore();
 
         requestAnimationFrame(() => {
-            expect(fn1.called).to.equal(true);
-            expect(fn2.called).to.equal(true);
-            expect(requestSpy.callCount).to.equal(1);
+            expect(callback1.called).to.equal(true);
+            expect(callback2.called).to.equal(true);
             done();
         });
     });
 
-    it('should be able to set the frames-per-second', () => {
-        expect(fps).to.be.a('function');
-        expect(fps.length).to.equal(1);
-    });
+    it('should execute all callback functions within a single frame if they do not exceed the fps interval time', (done) => {
+        fps(60);
 
-    it('should execute all callback functions within a single frame if they don\'t exceed the fps interval time', (done) => {
-        const fn1 = sinon.spy(() => sleep(2));
-        const fn2 = sinon.spy(() => sleep(2));
-        const fn3 = sinon.spy(() => sleep(2));
+        const callback1 = sinon.spy(() => sleep(2));
+        const callback2 = sinon.spy(() => sleep(2));
+        const callback3 = sinon.spy(() => sleep(2));
 
-        scheduleRender(fn1);
-        scheduleRender(fn2);
-        scheduleRender(fn3);
+        scheduleRender(callback1);
+        scheduleRender(callback2);
+        scheduleRender(callback3);
 
         requestAnimationFrame(() => {
-            expect(fn1.called).to.equal(true);
-            expect(fn2.called).to.equal(true);
-            expect(fn3.called).to.equal(true);
+            expect(callback1.called).to.equal(true);
+            expect(callback2.called).to.equal(true);
+            expect(callback3.called).to.equal(true);
             done();
         });
     });
@@ -61,44 +57,44 @@ describe('schedule-render', () => {
     it('should automatically schedule another frame if the fps interval time has been exceeded', (done) => {
         fps(60);
 
-        const fn1 = sinon.spy(() => sleep(20));
-        const fn2 = sinon.spy(() => sleep(2));
+        const callback1 = sinon.spy(() => sleep(20));
+        const callback2 = sinon.spy(() => sleep(2));
 
-        scheduleRender(fn1);
-        scheduleRender(fn2);
+        scheduleRender(callback1);
+        scheduleRender(callback2);
 
         requestAnimationFrame(() => {
-            expect(fn1.called).to.equal(true);
-            expect(fn2.called).to.equal(false);
+            expect(callback1.called).to.equal(true);
+            expect(callback2.called).to.equal(false);
             requestAnimationFrame(() => {
-                expect(fn2.called).to.equal(true);
+                expect(callback2.called).to.equal(true);
                 done();
             });
         });
     });
 
     it('should return a function that can remove the callback function from the queue', (done) => {
-        const fn1 = sinon.spy();
-        const fn2 = sinon.spy();
+        const callback1 = sinon.spy();
+        const callback2 = sinon.spy();
 
-        const remove1 = scheduleRender(fn1);
-        scheduleRender(fn2);
+        const remove1 = scheduleRender(callback1);
+        scheduleRender(callback2);
 
         remove1();
 
         requestAnimationFrame(() => {
-            expect(fn1.called).to.equal(false);
-            expect(fn2.called).to.equal(true);
+            expect(callback1.called).to.equal(false);
+            expect(callback2.called).to.equal(true);
             done();
         });
     });
 
     it('should cancel a frame if the only callback function in the queue is removed', () => {
-        const fn = sinon.spy();
+        const callback = sinon.spy();
         const requestSpy = sinon.spy(window, 'requestAnimationFrame');
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
-        const remove = scheduleRender(fn);
+        const remove = scheduleRender(callback);
         expect(requestSpy.callCount).to.equal(1);
 
         remove();
@@ -108,12 +104,12 @@ describe('schedule-render', () => {
         cancelSpy.restore();
     });
 
-    it('should be able to cancel all functions in the queue and cancel the frame', (done) => {
-        const fn1 = sinon.spy();
-        const fn2 = sinon.spy();
+    it('should be able to clear the queue and cancel the frame', (done) => {
+        const callback1 = sinon.spy();
+        const callback2 = sinon.spy();
 
-        scheduleRender(fn1);
-        scheduleRender(fn2);
+        scheduleRender(callback1);
+        scheduleRender(callback2);
 
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
@@ -124,8 +120,8 @@ describe('schedule-render', () => {
         cancelSpy.restore();
 
         requestAnimationFrame(() => {
-            expect(fn1.called).to.equal(false);
-            expect(fn2.called).to.equal(false);
+            expect(callback1.called).to.equal(false);
+            expect(callback2.called).to.equal(false);
             done();
         });
     });
