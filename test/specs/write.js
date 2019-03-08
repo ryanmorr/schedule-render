@@ -1,27 +1,5 @@
-/* eslint-disable max-len */
-
-import { expect } from 'chai';
-import sinon from 'sinon';
 import write from '../../src/write';
-
-// Use high performance now if available
-const now = typeof performance !== 'undefined' ? performance.now.bind(performance) : Date.now;
-
-// Polyfill `requestAnimationFrame`
-window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || ((cb) => setTimeout(cb, 1000 / 60));
-
-// Polyfill `cancelAnimationFrame`
-window.cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || ((id) => clearTimeout(id));
-
-// Pause execution to test functionality
-function sleep(ms) {
-    const start = now();
-    for (let i = 0; i < 1e7; i++) {
-        if ((now() - start) > ms) {
-            break;
-        }
-    }
-}
+import { now, sleep } from '../setup';
 
 describe('write', () => {
     it('should schedule a frame to write to the DOM', (done) => {
