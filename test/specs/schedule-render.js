@@ -35,7 +35,7 @@ describe('schedule-render', () => {
         });
     });
 
-    it('should execute all callback functions within a single frame if they do not exceed the fps interval time', (done) => {
+    it('should execute all callback functions within a single frame if they do not exceed the fps budget', (done) => {
         fps(60);
 
         const callback1 = sinon.spy(() => sleep(2));
@@ -54,21 +54,38 @@ describe('schedule-render', () => {
         });
     });
 
-    it('should automatically schedule another frame if the fps interval time has been exceeded', (done) => {
+    it('should automatically schedule another frame if the fps budget has been exceeded', (done) => {
         fps(60);
 
-        const callback1 = sinon.spy(() => sleep(20));
+        const callback1 = sinon.spy(() => sleep(13));
         const callback2 = sinon.spy(() => sleep(2));
 
         scheduleRender(callback1);
         scheduleRender(callback2);
 
         requestAnimationFrame(() => {
-            expect(callback1.called).to.equal(true);
-            expect(callback2.called).to.equal(false);
+            expect(callback1.callCount).to.equal(1);
+            expect(callback2.callCount).to.equal(0);
+
             requestAnimationFrame(() => {
-                expect(callback2.called).to.equal(true);
-                done();
+                expect(callback2.callCount).to.equal(1);
+
+                fps(30);
+
+                scheduleRender(callback1);
+                scheduleRender(callback1);
+                scheduleRender(callback1);
+                scheduleRender(callback2);
+
+                requestAnimationFrame(() => {
+                    expect(callback1.callCount).to.equal(4);
+                    expect(callback2.callCount).to.equal(1);
+
+                    requestAnimationFrame(() => {
+                        expect(callback2.callCount).to.equal(2);
+                        done();
+                    });
+                });
             });
         });
     });
@@ -104,7 +121,7 @@ describe('schedule-render', () => {
         cancelSpy.restore();
     });
 
-    it('should be able to clear the queue and cancel the frame', (done) => {
+    it('should clear the queue and cancel the frame', (done) => {
         const callback1 = sinon.spy();
         const callback2 = sinon.spy();
 

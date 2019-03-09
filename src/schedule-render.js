@@ -1,18 +1,20 @@
 let frame;
-let fpsValue = 60;
-let interval = 1000 / fpsValue;
+let budget;
 const batch = [];
-const now = typeof performance !== 'undefined' ? performance.now.bind(performance) : Date.now;
+
+// Browser's require around 6ms to render a frame
+// https://developers.google.com/web/fundamentals/performance/rail#animation
+const browserRenderTime = 6;
 
 function render() {
     frame = null;
-    const start = now();
+    const start = performance.now();
     do {
         const callback = batch.shift();
         if (callback) {
             callback();
         }
-    } while (batch.length && ((now() - start) < interval));
+    } while (batch.length && ((performance.now() - start) < budget));
     if (batch.length) {
         frame = requestAnimationFrame(render);
     }
@@ -36,8 +38,7 @@ export function scheduleRender(callback) {
 }
 
 export function fps(value) {
-    fpsValue = value;
-    interval = 1000 / fpsValue;
+    budget = (1000 / value) - browserRenderTime;
 }
 
 export function clear() {
@@ -46,3 +47,5 @@ export function clear() {
     }
     batch.length = 0;
 }
+
+fps(60);
