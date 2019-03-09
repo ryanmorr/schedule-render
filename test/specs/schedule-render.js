@@ -2,12 +2,14 @@ import { scheduleRender, fps, clear } from '../../src/schedule-render';
 import { sleep } from '../setup';
 
 describe('schedule-render', () => {
-    it('should schedule a frame to render DOM updates', (done) => {
-        const callback = sinon.spy();
+    it('should schedule a frame to render DOM updates and return a promise', (done) => {
+        const callback = sinon.spy(() => 'foo');
         const spy = sinon.spy(window, 'requestAnimationFrame');
 
-        scheduleRender(callback);
-        requestAnimationFrame(() => {
+        const promise = scheduleRender(callback);
+        expect(promise).to.be.a('promise');
+        promise.then((value) => {
+            expect(value).to.equal('foo');
             expect(callback.called).to.equal(true);
             expect(spy.called).to.equal(true);
             spy.restore();
@@ -88,37 +90,6 @@ describe('schedule-render', () => {
                 });
             });
         });
-    });
-
-    it('should return a function that can remove the callback function from the queue', (done) => {
-        const callback1 = sinon.spy();
-        const callback2 = sinon.spy();
-
-        const remove1 = scheduleRender(callback1);
-        scheduleRender(callback2);
-
-        remove1();
-
-        requestAnimationFrame(() => {
-            expect(callback1.called).to.equal(false);
-            expect(callback2.called).to.equal(true);
-            done();
-        });
-    });
-
-    it('should cancel a frame if the only callback function in the queue is removed', () => {
-        const callback = sinon.spy();
-        const requestSpy = sinon.spy(window, 'requestAnimationFrame');
-        const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
-
-        const remove = scheduleRender(callback);
-        expect(requestSpy.callCount).to.equal(1);
-
-        remove();
-        expect(cancelSpy.callCount).to.equal(1);
-
-        requestSpy.restore();
-        cancelSpy.restore();
     });
 
     it('should clear the queue and cancel the frame', (done) => {

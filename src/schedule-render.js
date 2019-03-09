@@ -21,20 +21,12 @@ function render() {
 }
 
 export function scheduleRender(callback) {
-    if (!frame) {
-        frame = requestAnimationFrame(render);
-    }
-    batch.push(callback);
-    return () => {
-        const index = batch.indexOf(callback);
-        if (index === -1) {
-            return;
+    return new Promise((resolve) => {
+        if (!frame) {
+            frame = requestAnimationFrame(render);
         }
-        batch.splice(index, 1);
-        if (frame && !batch.length) {
-            cancelAnimationFrame(frame);
-        }
-    };
+        batch.push(() => resolve(callback()));
+    });
 }
 
 export function fps(value) {
