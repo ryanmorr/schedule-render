@@ -1,43 +1,46 @@
 let frame;
-let budget;
+let start;
+let budget = null;
 const batch = [];
 
 // Browser's require around 6ms to render a frame
 // https://developers.google.com/web/fundamentals/performance/rail#animation
-const browserRenderTime = 6;
+const BROWSER_RENDER_TIME = 6;
 
 function render() {
     frame = null;
-    const start = performance.now();
-    do {
-        const callback = batch.shift();
-        if (callback) {
-            callback();
+    if (budget == null) {
+        while (batch.length > 0) batch.shift().render();
+    } else {
+        start = performance.now();
+        do {
+            batch.shift().render();
+        } while (batch.length > 0 && ((performance.now() - start) < budget));
+        if (batch.length > 0) {
+            frame = requestAnimationFrame(render);
         }
-    } while (batch.length && ((performance.now() - start) < budget));
-    if (batch.length) {
-        frame = requestAnimationFrame(render);
     }
 }
 
-export function scheduleRender(callback) {
-    return new Promise((resolve) => {
-        if (!frame) {
-            frame = requestAnimationFrame(render);
-        }
-        batch.push(() => resolve(callback()));
-    });
-}
-
 export function fps(value) {
-    budget = (1000 / value) - browserRenderTime;
+    budget = (typeof value === 'number') ? (1000 / value) - BROWSER_RENDER_TIME : null;
 }
 
 export function clear() {
     if (frame) {
         cancelAnimationFrame(frame);
     }
-    batch.length = 0;
+    while (batch.length > 0) batch.shift().cancel();
 }
 
-fps(60);
+export function scheduleRender(callback) {
+    return new Promise((resolve, reject) => {
+        if (!frame) {
+            frame = requestAnimationFrame(render);
+        }
+        batch.push({
+            render: () => resolve(callback()),
+            cancel: reject
+        });
+    });
+}

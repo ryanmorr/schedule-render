@@ -3,6 +3,8 @@ import { sleep } from '../setup';
 
 describe('schedule-render', () => {
     it('should schedule a frame to render DOM updates and return a promise', (done) => {
+        fps(null);
+
         const callback = sinon.spy(() => 'foo');
         const spy = sinon.spy(window, 'requestAnimationFrame');
 
@@ -18,6 +20,8 @@ describe('schedule-render', () => {
     });
 
     it('should only schedule one frame per cycle', (done) => {
+        fps(null);
+
         const callback1 = sinon.spy();
         const callback2 = sinon.spy();
         const requestSpy = sinon.spy(window, 'requestAnimationFrame');
@@ -33,6 +37,25 @@ describe('schedule-render', () => {
         requestAnimationFrame(() => {
             expect(callback1.called).to.equal(true);
             expect(callback2.called).to.equal(true);
+            done();
+        });
+    });
+
+    it('should execute all callback functions within a single frame by default', (done) => {
+        fps(null);
+
+        const callback1 = sinon.spy(() => sleep(20));
+        const callback2 = sinon.spy(() => sleep(30));
+        const callback3 = sinon.spy(() => sleep(40));
+
+        scheduleRender(callback1);
+        scheduleRender(callback2);
+        scheduleRender(callback3);
+
+        requestAnimationFrame(() => {
+            expect(callback1.called).to.equal(true);
+            expect(callback2.called).to.equal(true);
+            expect(callback3.called).to.equal(true);
             done();
         });
     });
@@ -92,12 +115,17 @@ describe('schedule-render', () => {
         });
     });
 
-    it('should clear the queue and cancel the frame', (done) => {
+    it('should cancel the frame, reject promises, and clear the queue', (done) => {
+        fps(null);
+
         const callback1 = sinon.spy();
         const callback2 = sinon.spy();
 
-        scheduleRender(callback1);
-        scheduleRender(callback2);
+        const reject1 = sinon.spy();
+        const reject2 = sinon.spy();
+
+        scheduleRender(callback1).catch(reject1);
+        scheduleRender(callback2).catch(reject2);
 
         const cancelSpy = sinon.spy(window, 'cancelAnimationFrame');
 
@@ -110,6 +138,8 @@ describe('schedule-render', () => {
         requestAnimationFrame(() => {
             expect(callback1.called).to.equal(false);
             expect(callback2.called).to.equal(false);
+            expect(reject1.called).to.equal(true);
+            expect(reject2.called).to.equal(true);
             done();
         });
     });
