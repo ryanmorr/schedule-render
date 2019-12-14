@@ -8,7 +8,7 @@
 
 ## Install
 
-Download the [development](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.js) or [minified](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.min.js) version, or install via NPM:
+Download the [CJS](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.cjs.js), [ESM](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.esm.js), [UMD](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.umd.js) versions or install via NPM:
 
 ``` sh
 npm install @ryanmorr/schedule-render
@@ -16,26 +16,26 @@ npm install @ryanmorr/schedule-render
 
 ## Usage
 
-Schedule a frame to batch DOM mutations and returns a promise that is fulfilled when rendering is complete:
+Schedule a frame to invoke a callback function that mutates the DOM, returning a promise that is fulfilled when rendering is complete:
 
 ``` javascript
 import { scheduleRender } from '@ryanmorr/schedule-render';
 
 scheduleRender(() => {
     // Manipulate the DOM within the callback function
-    // The value returned by the callback is provided to all thenables
+    // The return value is provided to all thenables
 }).then((value) => {
     // Rendering complete
 });
 ```
 
-Throttle frames to a specific frame rate (defaults to 60fps):
+By default, all callbacks in the queue are invoked in the next frame. To throttle frames to a specific frame rate, use the `fps` function:
 
 ``` javascript
 import { fps } from '@ryanmorr/schedule-render';
 
-// Set the frames-per-second to 30
-fps(30);
+// Set the frames-per-second to 60
+fps(60);
 
 // When the frame rate budget has been exceeded and more callbacks still exist within the queue,
 // a new frame will be automatically scheduled until everything in the queue has been rendered
