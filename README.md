@@ -8,7 +8,7 @@
 
 ## Install
 
-Download the [CJS](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.cjs.js), [ESM](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.esm.js), [UMD](http://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.umd.js) versions or install via NPM:
+Download the [CJS](https://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.cjs.js), [ESM](https://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.esm.js), [UMD](https://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.umd.js) versions or install via NPM:
 
 ``` sh
 npm install @ryanmorr/schedule-render
@@ -29,28 +29,30 @@ scheduleRender(() => {
 });
 ```
 
-By default, all callbacks in the queue are invoked in the next frame. To throttle frames to a specific frame rate, use the `fps` function:
+By default, all callbacks in the queue are invoked in the next frame. To throttle frames to a specific frame rate, use the `fps` function. This will establish a budget in milliseconds to complete rendering before a frame is dropped. When the frame rate budget has been exceeded and more callbacks still exist within the queue, a new frame will be automatically scheduled until everything in the queue has been rendered:
 
 ``` javascript
 import { fps } from '@ryanmorr/schedule-render';
 
-// Set the frames-per-second to 60
+// Set the frames-per-second to 60,
+// establishing a budget of 16.67 ms per frame
 fps(60);
 
-// When the frame rate budget has been exceeded and more callbacks still exist within the queue,
-// a new frame will be automatically scheduled until everything in the queue has been rendered
-scheduleRender(renderer);
+// If the first callback exceeds the budget threshold
+// a new frame is scheduled for the second callback
+scheduleRender(render1);
+scheduleRender(render2);
 ```
 
-Clear the queue and cancel the frame:
+Use the `clear` function to cancel the frame, reject the rendering proomises, and clear the queue:
 
 ``` javascript
 import { clear } from '@ryanmorr/schedule-render';
 
-scheduleRender(renderer1);
-scheduleRender(renderer2);
+scheduleRender(render1);
+scheduleRender(render2);
 
-// Removes the 2 scheduled callbacks
+// Removes both scheduled callbacks
 clear();
 ```
 
