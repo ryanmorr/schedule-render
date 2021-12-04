@@ -19,30 +19,18 @@ function flush() {
     frame = null;
     start = getTime();
     do {
-        tasks.shift().render();
+        tasks.shift()();
     } while (shouldRender());
     if (hasTasks()) {
         frame = requestAnimationFrame(flush);
     }
 }
 
-export function clear() {
-    if (frame) {
-        cancelAnimationFrame(frame);
-    }
-    while (hasTasks()) {
-        tasks.shift().cancel();
-    }
-}
-
-export function scheduleRender(callback) {
-    return new Promise((resolve, reject) => {
+export default function scheduleRender(callback) {
+    return new Promise((resolve) => {
         if (!frame) {
             frame = requestAnimationFrame(flush);
         }
-        tasks.push({
-            render: () => resolve(callback()),
-            cancel: reject
-        });
+        tasks.push(() => resolve(callback()));
     });
 }
