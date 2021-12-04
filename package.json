@@ -1,7 +1,7 @@
 {
   "name": "@ryanmorr/schedule-render",
-  "description": "Batch DOM manipulations in a performant manner",
-  "version": "2.0.1",
+  "description": "Deferred DOM rendering optimized for 60fps",
+  "version": "3.0.0",
   "license": "Unlicense",
   "author": "Ryan Morr",
   "homepage": "https://github.com/ryanmorr/schedule-render",
