@@ -11,16 +11,18 @@ function hasTasks() {
     return tasks.length > 0;
 }
 
-function shouldRender() {
-    return hasTasks() && (getTime() - start) < THRESHOLD;
+function isWithinBudget() {
+    return (getTime() - start) < THRESHOLD;
 }
 
 function flush() {
-    frame = null;
     start = getTime();
     do {
-        tasks.shift()();
-    } while (shouldRender());
+        if (hasTasks()) {
+            tasks.shift()();
+        }
+    } while (isWithinBudget());
+    frame = null;
     if (hasTasks()) {
         frame = requestAnimationFrame(flush);
     }

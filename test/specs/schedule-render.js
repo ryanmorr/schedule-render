@@ -100,4 +100,25 @@ describe('schedule-render', () => {
             });
         });
     });
+
+    it('should support nested calls across frames', (done) => {
+        const callback1 = sinon.spy();
+        const callback2 = sinon.spy(() => {
+            wait(5);
+            scheduleRender(callback1);
+        });
+
+        scheduleRender(callback2);
+
+        requestAnimationFrame(() => {
+            expect(callback2.callCount).to.equal(1);
+            expect(callback1.callCount).to.equal(0);
+            
+            requestAnimationFrame(() => {
+                expect(callback2.callCount).to.equal(1);
+                expect(callback1.callCount).to.equal(1);
+                done();
+            });
+        });
+    });
 });
