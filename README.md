@@ -1,14 +1,14 @@
 # schedule-render
 
 [![Version Badge][version-image]][project-url]
-[![Build Status][build-image]][build-url]
 [![License][license-image]][license-url]
+[![Build Status][build-image]][build-url]
 
 > Deferred DOM rendering optimized for 60fps
 
 ## Install
 
-Download the [CJS](https://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.cjs.js), [ESM](https://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.esm.js), [UMD](https://github.com/ryanmorr/schedule-render/raw/master/dist/schedule-render.umd.js) versions or install via NPM:
+Download the [CJS](https://github.com/ryanmorr/schedule-render/raw/master/dist/cjs/schedule-render.js), [ESM](https://github.com/ryanmorr/schedule-render/raw/master/dist/esm/schedule-render.js), [UMD](https://github.com/ryanmorr/schedule-render/raw/master/dist/umd/schedule-render.js) versions or install via NPM:
 
 ``` sh
 npm install @ryanmorr/schedule-render
@@ -34,8 +34,8 @@ scheduleRender(() => {
 This project is dedicated to the public domain as described by the [Unlicense](http://unlicense.org/).
 
 [project-url]: https://github.com/ryanmorr/schedule-render
-[version-image]: https://badge.fury.io/gh/ryanmorr%2Fschedule-render.svg
-[build-url]: https://travis-ci.org/ryanmorr/schedule-render
-[build-image]: https://travis-ci.org/ryanmorr/schedule-render.svg
-[license-image]: https://img.shields.io/badge/license-Unlicense-blue.svg
+[version-image]: https://img.shields.io/github/package-json/v/ryanmorr/schedule-render?color=blue&style=flat-square
+[build-url]: https://github.com/ryanmorr/schedule-render/actions
+[build-image]: https://img.shields.io/github/actions/workflow/status/ryanmorr/schedule-render/node.js.yml?style=flat-square
+[license-image]: https://img.shields.io/github/license/ryanmorr/schedule-render?color=blue&style=flat-square
 [license-url]: UNLICENSE
