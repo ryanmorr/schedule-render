@@ -5,8 +5,11 @@
   "license": "Unlicense",
   "author": "Ryan Morr",
   "homepage": "https://github.com/ryanmorr/schedule-render",
-  "repository": "github:ryanmorr/schedule-render",
   "bugs": "https://github.com/ryanmorr/schedule-rendery/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanmorr/schedule-render.git"
+  },
   "keywords": [
     "javascript",
     "performance",
