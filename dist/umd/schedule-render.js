@@ -1,2 +1,2 @@
-/*! @ryanmorr/schedule-render v3.0.2 | https://github.com/ryanmorr/schedule-render */
+/*! @ryanmorr/schedule-render v3.0.3 | https://github.com/ryanmorr/schedule-render */
 !function(e,n){"object"==typeof exports&&"undefined"!=typeof module?module.exports=n():"function"==typeof define&&define.amd?define(n):(e="undefined"!=typeof globalThis?globalThis:e||self).scheduleRender=n()}(this,(function(){"use strict";let e,n;const t=[],o=5;function i(){return performance.now()}function u(){return t.length>0}function f(){n=i();do{u()&&t.shift()()}while(i()-n<o);e=null,u()&&(e=requestAnimationFrame(f))}return function(n){return new Promise((o=>{e||(e=requestAnimationFrame(f)),t.push((()=>o(n())))}))}}));
